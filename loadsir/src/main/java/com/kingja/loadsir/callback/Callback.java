@@ -2,6 +2,9 @@ package com.kingja.loadsir.callback;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.core.widget.NestedScrollView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,11 +47,11 @@ public abstract class Callback implements Serializable {
         }
 
         if (onBuildView(context) != null) {
-            rootView = onBuildView(context);
+            rootView = wrapView(onBuildView(context));
         }
 
         if (rootView == null) {
-            rootView = View.inflate(context, onCreateView(), null);
+            rootView = wrapView(View.inflate(context, onCreateView(), null));
         }
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +64,17 @@ public abstract class Callback implements Serializable {
                 }
             }
         });
-        onViewCreate(context, rootView);
+        //no successCallback
+        //onViewCreate(context, rootView);
+        onViewCreate(context, getActualRootView());
         return rootView;
+    }
+
+    protected View wrapView(View oldView) {
+        NestedScrollView wrapperView = new NestedScrollView(context);
+        wrapperView.setFillViewport(true);
+        wrapperView.addView(oldView);
+        return wrapperView;
     }
 
     protected View onBuildView(Context context) {
@@ -76,7 +88,7 @@ public abstract class Callback implements Serializable {
         return successViewVisible;
     }
 
-    void setSuccessVisible(boolean visible) {
+    protected void setSuccessVisible(boolean visible) {
         this.successViewVisible = visible;
     }
 
@@ -114,9 +126,15 @@ public abstract class Callback implements Serializable {
      */
     public View obtainRootView() {
         if (rootView == null) {
-            rootView = View.inflate(context, onCreateView(), null);
+            //no successCallback
+            rootView = wrapView(View.inflate(context, onCreateView(), null));
+            return getActualRootView();
         }
         return rootView;
+    }
+
+    public View getActualRootView() {
+        return ((ViewGroup) rootView).getChildAt(0);
     }
 
     public interface OnReloadListener extends Serializable {

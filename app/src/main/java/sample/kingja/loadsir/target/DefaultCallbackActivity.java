@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.callback.HintCallback;
-import com.kingja.loadsir.callback.ProgressCallback;
+import sample.kingja.loadsir.callback.HintCallback;
+import sample.kingja.loadsir.callback.ProgressCallback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 

@@ -1,15 +1,19 @@
-package com.kingja.loadsir.callback;
+package sample.kingja.loadsir.callback;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.StyleRes;
+
+import com.kingja.loadsir.callback.Callback;
+
 
 /**
  * Description:TODO
@@ -17,19 +21,20 @@ import androidx.annotation.StyleRes;
  * Author:KingJA
  * Email:kingjavip@gmail.com
  */
-public class ProgressCallback extends Callback {
+public class HintCallback extends Callback {
 
     private String title;
     private String subTitle;
-    private int subTitleStyleRes = -1;
-    private int titleStyleRes = -1;
+    private int imgResId;
+    private int titleStyleRes;
+    private int subTitleStyleRes;
 
-    private ProgressCallback(Builder builder) {
+    public HintCallback(Builder builder) {
         this.title = builder.title;
         this.subTitle = builder.subTitle;
+        this.imgResId = builder.imgResId;
         this.subTitleStyleRes = builder.subTitleStyleRes;
         this.titleStyleRes = builder.titleStyleRes;
-        setSuccessVisible(builder.aboveable);
     }
 
     @Override
@@ -50,10 +55,11 @@ public class ProgressCallback extends Callback {
         LinearLayout ll = (LinearLayout) view;
         ll.setOrientation(LinearLayout.VERTICAL);
         ll.setGravity(Gravity.CENTER);
-
-        ProgressBar progressBar = new ProgressBar(context);
-        ll.addView(progressBar, lp);
-
+        if (imgResId != -1) {
+            ImageView ivImage = new ImageView(context);
+            ivImage.setBackgroundResource(imgResId);
+            ll.addView(ivImage, lp);
+        }
         if (!TextUtils.isEmpty(title)) {
             TextView tvTitle = new TextView(context);
             tvTitle.setText(title);
@@ -68,7 +74,7 @@ public class ProgressCallback extends Callback {
             TextView tvSubtitle = new TextView(context);
             tvSubtitle.setText(subTitle);
             if (subTitleStyleRes == -1) {
-                tvSubtitle.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+                tvSubtitle.setTextAppearance(context, android.R.style.TextAppearance_Small);
             } else {
                 tvSubtitle.setTextAppearance(context, subTitleStyleRes);
             }
@@ -77,12 +83,16 @@ public class ProgressCallback extends Callback {
     }
 
     public static class Builder {
-
         private String title;
         private String subTitle;
+        private int imgResId = -1;
         private int subTitleStyleRes = -1;
         private int titleStyleRes = -1;
-        private boolean aboveable;
+
+        public Builder setHintImg(@DrawableRes int imgResId) {
+            this.imgResId = imgResId;
+            return this;
+        }
 
         public Builder setTitle(String title) {
             return setTitle(title, -1);
@@ -104,13 +114,8 @@ public class ProgressCallback extends Callback {
             return this;
         }
 
-        public Builder setAboveSuccess(boolean aboveable) {
-            this.aboveable = aboveable;
-            return this;
-        }
-
-        public ProgressCallback build() {
-            return new ProgressCallback(this);
+        public HintCallback build() {
+            return new HintCallback(this);
         }
     }
 }
