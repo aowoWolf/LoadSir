@@ -26,4 +26,4 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Bild Debug Apk
-      run: bash ./gradlew :app:assembleDebug
+      run: bash ./gradlew :loadsir:assembleDebug
