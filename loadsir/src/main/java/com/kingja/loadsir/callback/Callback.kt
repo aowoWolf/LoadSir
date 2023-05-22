@@ -63,9 +63,8 @@ abstract class Callback(
             if (onReloadEvent(context, rootView)) {
                 return@OnClickListener
             }
-            if (onReloadListener != null) {
-                onReloadListener!!.onReload(v)
-            }
+
+            onReloadListener?.onReload(v)
         })
         //no successCallback
         //onViewCreate(context, rootView);
