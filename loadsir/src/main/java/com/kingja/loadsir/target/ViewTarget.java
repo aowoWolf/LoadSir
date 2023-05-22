@@ -7,8 +7,6 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.LoadLayout;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 /**
  * Description:TODO
  * Create Time:2019/8/29 0029 下午 2:44

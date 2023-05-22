@@ -1,10 +1,11 @@
 package com.kingja.loadsir.core;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
 
 import com.kingja.loadsir.LoadSirUtil;
 import com.kingja.loadsir.callback.Callback;
@@ -13,15 +14,10 @@ import com.kingja.loadsir.callback.SuccessCallback;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-
 /**
- * Description:TODO
- * Create Time:2017/9/2 17:02
- * Author:KingJA
- * Email:kingjavip@gmail.com
+ * @author ljkeo
+ * @date 2022/9/5 13:56
  */
-
 public class LoadLayout extends FrameLayout {
     private final String TAG = getClass().getSimpleName();
     private Map<Class<? extends Callback>, Callback> callbacks = new HashMap<>();
@@ -100,10 +96,11 @@ public class LoadLayout extends FrameLayout {
                 if (key == SuccessCallback.class) {
                     successCallback.show();
                 } else {
-                    successCallback.showWithCallback(callbacks.get(key).getSuccessVisible());
-                    View rootView = callbacks.get(key).getRootView();
+                    Callback instance = callbacks.get(key);
+                    successCallback.showWithCallback(instance.getSuccessVisible());
+                    View rootView = instance.getRootView();
                     addView(rootView);
-                    callbacks.get(key).onAttach(context, rootView);
+                    instance.onAttach(context, instance.getActualRootView());
                 }
                 preCallback = status;
             }

@@ -53,7 +53,7 @@ public abstract class Callback implements Serializable {
         if (rootView == null) {
             rootView = wrapView(View.inflate(context, onCreateView(), null));
         }
-        rootView.setOnClickListener(new View.OnClickListener() {
+        getActualRootView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onReloadEvent(context, rootView)) {
