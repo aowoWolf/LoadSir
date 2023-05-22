@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'org.jetbrains.kotlin.android'
+//apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'kotlin-android'
 //apply plugin: 'com.novoda.bintray-release'
 
 android {
@@ -18,6 +19,13 @@ android {
         release {
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -26,7 +34,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.fragment:fragment:1.2.2'
 
-    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:1.3.0'
 }
 
 /*

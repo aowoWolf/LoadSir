@@ -1,7 +1,7 @@
-package com.kingja.loadsir.target;
+package com.kingja.loadsir.target
 
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.core.LoadLayout;
+import com.kingja.loadsir.callback.Callback
+import com.kingja.loadsir.core.LoadLayout
 
 /**
  * Description:TODO
@@ -9,14 +9,15 @@ import com.kingja.loadsir.core.LoadLayout;
  * Author:KingJA
  * Email:kingjavip@gmail.com
  */
-public interface ITarget {
+interface ITarget {
     /**
      *
      * @param target
      * @return
      * v1.3.8
      */
-    boolean equals(Object target);
+    override fun equals(target: Any?): Boolean
+
     /**
      * 1.removeView 2.确定LP 3.addView
      * @param target
@@ -24,5 +25,5 @@ public interface ITarget {
      * @return
      * v1.3.8
      */
-    LoadLayout replaceView(Object target, Callback.OnReloadListener onReloadListener);
+    fun replaceView(target: Any, onReloadListener: Callback.OnReloadListener?): LoadLayout
 }
