@@ -21,26 +21,11 @@ abstract class Callback(
     private var context: Context?,
     private var onReloadListener: OnReloadListener?
 ) : Serializable {
-    /*
-        private var rootView: View? = null
-        private var context: Context? = null
-        private var onReloadListener: OnReloadListener? = null
-    */
-
     /**
      * if return true, the successView will be visible when the view of callback is attached.
      */
     var successVisible = false
         protected set
-
-    /*
-        constructor() {}
-        internal constructor(view: View?, context: Context?, onReloadListener: OnReloadListener?) {
-            rootView = view
-            this.context = context
-            this.onReloadListener = onReloadListener
-        }
-    */
 
     fun setCallback(context: Context?, onReloadListener: OnReloadListener?): Callback {
         this.context = context
