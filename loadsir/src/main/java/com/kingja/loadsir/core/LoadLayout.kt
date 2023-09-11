@@ -24,7 +24,7 @@ class LoadLayout(
     fun setupSuccessLayout(callback: Callback) {
         addCallback(callback)
         val successView = callback.getRootView()
-        successView!!.visibility = INVISIBLE
+        successView.visibility = INVISIBLE
         addView(
             successView, ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

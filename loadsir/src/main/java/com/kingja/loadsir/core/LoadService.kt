@@ -18,7 +18,9 @@ class LoadService<T> internal constructor(
 
     init {
         builder.getCallbacks().forEach(loadLayout::setupCallback)
-        Handler().post { builder.defaultCallback?.let(loadLayout::showCallback) }
+        builder.defaultCallback?.let { defCallback ->
+            Handler().post { loadLayout.showCallback(defCallback) }
+        }
     }
 
     fun showSuccess() {

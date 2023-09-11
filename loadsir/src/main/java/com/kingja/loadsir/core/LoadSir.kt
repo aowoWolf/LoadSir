@@ -77,7 +77,8 @@ class LoadSir private constructor() {
     }
 
     companion object {
-        val INSTANCE by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { LoadSir() }
+        private val INSTANCE by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { LoadSir() }
+        fun getDefault(): LoadSir = INSTANCE
 
         fun beginBuilder(): Builder = Builder()
     }

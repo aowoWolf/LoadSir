@@ -1,6 +1,5 @@
 package com.kingja.loadsir.target
 
-import android.R
 import android.app.Activity
 import android.view.ViewGroup
 import com.kingja.loadsir.callback.SuccessCallback
@@ -21,7 +20,7 @@ class ActivityTarget : ITarget {
         onReload: OnReloadListener?
     ): LoadLayout {
         val activity = target as Activity
-        val contentParent = activity.findViewById<ViewGroup>(R.id.content)
+        val contentParent = activity.findViewById<ViewGroup>(android.R.id.content)
         val childIndex = 0
         val oldContent = contentParent.getChildAt(childIndex)
         contentParent.removeView(oldContent)
