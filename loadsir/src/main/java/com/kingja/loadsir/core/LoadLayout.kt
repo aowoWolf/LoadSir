@@ -5,7 +5,6 @@ import android.os.Looper
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.kingja.loadsir.callback.Callback
-import com.kingja.loadsir.core.OnReloadListener
 import com.kingja.loadsir.callback.SuccessCallback
 
 /**
@@ -14,7 +13,7 @@ import com.kingja.loadsir.callback.SuccessCallback
  */
 class LoadLayout(
     context: Context,
-    private val reloadListener: OnReloadListener?
+    private val onReload: OnReloadListener?
 ) : FrameLayout(context) {
     private val callbackPool: MutableMap<Class<out Callback?>?, Callback?> = HashMap()
 
@@ -37,7 +36,7 @@ class LoadLayout(
 
     fun setupCallback(callback: Callback) {
         callback.copy().let {
-            it.setCallback(context, reloadListener)
+            it.setCallback(context, onReload)
             addCallback(it)
         }
     }

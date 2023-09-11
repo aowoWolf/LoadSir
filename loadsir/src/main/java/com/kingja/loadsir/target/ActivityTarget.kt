@@ -18,7 +18,7 @@ class ActivityTarget : ITarget {
 
     override fun replaceView(
         target: Any,
-        reloadListener: OnReloadListener?
+        onReload: OnReloadListener?
     ): LoadLayout {
         val activity = target as Activity
         val contentParent = activity.findViewById<ViewGroup>(R.id.content)
@@ -26,13 +26,8 @@ class ActivityTarget : ITarget {
         val oldContent = contentParent.getChildAt(childIndex)
         contentParent.removeView(oldContent)
         val oldLayoutParams = oldContent.layoutParams
-        val loadLayout = LoadLayout(activity, reloadListener)
-        loadLayout.setupSuccessLayout(
-            SuccessCallback(
-                oldContent, activity,
-                reloadListener
-            )
-        )
+        val loadLayout = LoadLayout(activity, onReload)
+        loadLayout.setupSuccessLayout(SuccessCallback(oldContent, activity, onReload))
         contentParent.addView(loadLayout, childIndex, oldLayoutParams)
         return loadLayout
     }

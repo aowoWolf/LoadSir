@@ -21,9 +21,9 @@ interface ITarget {
     /**
      * 1.removeView 2.确定LP 3.addView
      * @param target
-     * @param reloadListener
+     * @param onReload
      * @return
      * v1.3.8
      */
-    fun replaceView(target: Any, reloadListener: OnReloadListener?): LoadLayout
+    fun replaceView(target: Any, onReload: OnReloadListener?): LoadLayout
 }

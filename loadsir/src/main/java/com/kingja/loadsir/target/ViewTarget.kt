@@ -17,29 +17,19 @@ class ViewTarget : ITarget {
 
     override fun replaceView(
         target: Any,
-        reloadListener: OnReloadListener?
+        onReload: OnReloadListener?
     ): LoadLayout {
         val oldContent = target as View
         val contentParent = oldContent.parent as ViewGroup
-        var childIndex = 0
-        val childCount = contentParent.childCount
-        for (i in 0 until childCount) {
-            if (contentParent.getChildAt(i) === oldContent) {
-                childIndex = i
-                break
-            }
-        }
+        val childIndex = contentParent.indexOfChild(oldContent)
+
         contentParent.removeView(oldContent)
         val oldLayoutParams = oldContent.layoutParams
-        val loadLayout = LoadLayout(oldContent.context, reloadListener)
+        val loadLayout = LoadLayout(oldContent.context, onReload)
         loadLayout.setupSuccessLayout(
-            SuccessCallback(
-                oldContent,
-                oldContent.context,
-                reloadListener
-            )
+            SuccessCallback(oldContent, oldContent.context, onReload)
         )
-        contentParent.addView(loadLayout, childIndex, oldLayoutParams)
+        contentParent.addView(loadLayout, childIndex.coerceAtLeast(0), oldLayoutParams)
         return loadLayout
     }
 }

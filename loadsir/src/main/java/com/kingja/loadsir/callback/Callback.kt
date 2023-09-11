@@ -22,18 +22,18 @@ import java.io.Serializable
 abstract class Callback(
     private var rootView: View?,
     private var context: Context?,
-    protected var reloadListener: OnReloadListener?
+    protected var onReload: OnReloadListener?
 ) : Serializable {
     constructor() : this(null, null, null)
 
     /**
      * if return true, the successView will be visible when the view of callback is attached.
      */
-    open fun getSuccessVisible():Boolean = false
+    open fun getSuccessVisible(): Boolean = false
 
-    open fun setCallback(context: Context, reloadListener: OnReloadListener?) = apply {
+    open fun setCallback(context: Context, onReload: OnReloadListener?) = apply {
         this.context = context
-        this.reloadListener = reloadListener
+        this.onReload = onReload
     }
 
     @CallSuper
@@ -48,12 +48,12 @@ abstract class Callback(
         if (rootView == null) {
             rootView = wrapView(View.inflate(context, onCreateView(), null))
         }
-        actualRootView.setOnClickListener {  v->
+        actualRootView.setOnClickListener { v ->
             if (onReloadEvent(rootView!!)) {
                 return@setOnClickListener
             }
 
-            reloadListener?.invoke(v)
+            onReload?.invoke(v)
         }
         //no successCallback
         //onViewCreate(context, rootView);
@@ -90,13 +90,6 @@ abstract class Callback(
 
     val actualRootView: View
         get() = (rootView as ViewGroup)[0]
-
-/*
-    @Deprecated("no used")
-    interface OnReloadListener : Serializable {
-        fun onReload(v: View?)
-    }
-*/
 
     protected abstract fun onCreateView(): Int
 

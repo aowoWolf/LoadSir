@@ -11,8 +11,8 @@ import com.kingja.loadsir.core.OnReloadListener
  * Author:KingJA
  * Email:kingjavip@gmail.com
  */
-class SuccessCallback(view: View?, context: Context?, reloadListener: OnReloadListener?) :
-    Callback(view, context, reloadListener) {
+class SuccessCallback(view: View?, context: Context?, onReload: OnReloadListener?) :
+    Callback(view, context, onReload) {
     override fun onCreateView(): Int = 0
 
     fun isShow(isVisible: Boolean) {
