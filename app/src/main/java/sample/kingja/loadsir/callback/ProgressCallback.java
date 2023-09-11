@@ -25,14 +25,21 @@ public class ProgressCallback extends Callback {
     private String subTitle;
     private int subTitleStyleRes = -1;
     private int titleStyleRes = -1;
+    private boolean aboveable;
 
     private ProgressCallback(Builder builder) {
         this.title = builder.title;
         this.subTitle = builder.subTitle;
         this.subTitleStyleRes = builder.subTitleStyleRes;
         this.titleStyleRes = builder.titleStyleRes;
-        setSuccessVisible(builder.aboveable);
+        this.aboveable = builder.aboveable;
+        //setSuccessVisible(builder.aboveable);
     }
+
+    public boolean getSuccessVisible() {
+        return this.aboveable;
+    }
+
 
     @Override
     protected int onCreateView() {
