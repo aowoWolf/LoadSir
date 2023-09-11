@@ -2,9 +2,9 @@ package com.kingja.loadsir.target
 
 import android.view.View
 import android.view.ViewGroup
-import com.kingja.loadsir.callback.Callback
 import com.kingja.loadsir.callback.SuccessCallback
 import com.kingja.loadsir.core.LoadLayout
+import com.kingja.loadsir.core.OnReloadListener
 
 /**
  * Description:TODO
@@ -13,13 +13,11 @@ import com.kingja.loadsir.core.LoadLayout
  * Email:kingjavip@gmail.com
  */
 class ViewTarget : ITarget {
-    override fun equals(target: Any?): Boolean {
-        return target is View
-    }
+    override fun equals(target: Any?): Boolean = target is View
 
     override fun replaceView(
         target: Any,
-        onReloadListener: Callback.OnReloadListener?
+        reloadListener: OnReloadListener?
     ): LoadLayout {
         val oldContent = target as View
         val contentParent = oldContent.parent as ViewGroup
@@ -33,12 +31,12 @@ class ViewTarget : ITarget {
         }
         contentParent.removeView(oldContent)
         val oldLayoutParams = oldContent.layoutParams
-        val loadLayout = LoadLayout(oldContent.context, onReloadListener)
+        val loadLayout = LoadLayout(oldContent.context, reloadListener)
         loadLayout.setupSuccessLayout(
             SuccessCallback(
                 oldContent,
                 oldContent.context,
-                onReloadListener
+                reloadListener
             )
         )
         contentParent.addView(loadLayout, childIndex, oldLayoutParams)

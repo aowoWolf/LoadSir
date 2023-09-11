@@ -1,6 +1,5 @@
 package com.kingja.loadsir.core
 
-import com.kingja.loadsir.LoadSirUtil
 import com.kingja.loadsir.callback.Callback
 import com.kingja.loadsir.target.ActivityTarget
 import com.kingja.loadsir.target.ITarget
@@ -12,34 +11,30 @@ import com.kingja.loadsir.target.ViewTarget
  * Author:KingJA
  * Email:kingjavip@gmail.com
  */
-class LoadSir {
-    private var builder: Builder
+class LoadSir private constructor() {
+    private var mBuilder: Builder = Builder()
 
-    private constructor() {
-        builder = Builder()
+    private constructor(builder: Builder) : this() {
+        mBuilder = builder
     }
 
     private fun setBuilder(builder: Builder) {
-        this.builder = builder
+        this.mBuilder = builder
     }
 
-    private constructor(builder: Builder) {
-        this.builder = builder
+
+    fun register(target: Any, onReload: OnReloadListener? = null): LoadService<*> {
+        return register<Any>(target, onReload, null)
     }
 
-    fun register(target: Any): LoadService<*> {
-        return register<Any>(target, null, null)
-    }
-
-    @JvmOverloads
     fun <T> register(
         target: Any,
-        onReloadListener: Callback.OnReloadListener?,
+        onReload: OnReloadListener?,
         convertor: Convertor<T>? = null
     ): LoadService<*> {
-        val targetContext = LoadSirUtil.getTargetContext(target, builder.getTargetContextList())
-        val loadLayout = targetContext!!.replaceView(target, onReloadListener)
-        return LoadService(convertor, loadLayout, builder)
+        val targetContext = getTargetContext(target, mBuilder.getTargetContextList())
+        val loadLayout = targetContext.replaceView(target, onReload)
+        return LoadService(convertor, loadLayout, mBuilder)
     }
 
     class Builder {
@@ -53,9 +48,8 @@ class LoadSir {
             targetContextList.add(ViewTarget())
         }
 
-        fun addCallback(callback: Callback): Builder {
+        fun addCallback(callback: Callback) = apply {
             callbacks.add(callback)
-            return this
         }
 
         /**
@@ -63,50 +57,33 @@ class LoadSir {
          * @return Builder
          * @since 1.3.8
          */
-        fun addTargetContext(targetContext: ITarget): Builder {
+        fun addTargetContext(targetContext: ITarget) = apply {
             targetContextList.add(targetContext)
-            return this
         }
 
-        fun getTargetContextList(): List<ITarget> {
-            return targetContextList
-        }
+        fun getTargetContextList(): List<ITarget> = targetContextList
 
-        fun setDefaultCallback(defaultCallback: Class<out Callback>): Builder {
+        fun setDefaultCallback(defaultCallback: Class<out Callback>) = apply {
             this.defaultCallback = defaultCallback
-            return this
         }
 
-        fun getCallbacks(): List<Callback> {
-            return callbacks
-        }
+        fun getCallbacks(): List<Callback> = callbacks
 
         fun commit() {
-            default!!.setBuilder(this)
+            INSTANCE.setBuilder(this)
         }
 
-        fun build(): LoadSir {
-            return LoadSir(this)
-        }
+        fun build(): LoadSir = LoadSir(this)
     }
 
     companion object {
-        @Volatile
-        private var loadSir: LoadSir? = null
-        val default: LoadSir?
-            get() {
-                if (loadSir == null) {
-                    synchronized(LoadSir::class.java) {
-                        if (loadSir == null) {
-                            loadSir = LoadSir()
-                        }
-                    }
-                }
-                return loadSir
-            }
+        val INSTANCE by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { LoadSir() }
 
-        fun beginBuilder(): Builder {
-            return Builder()
-        }
+        fun beginBuilder(): Builder = Builder()
     }
+}
+
+internal fun getTargetContext(target: Any, targetContextList: List<ITarget>): ITarget {
+    return targetContextList.find { it == target }
+        ?: throw IllegalArgumentException("No TargetContext fit it")
 }

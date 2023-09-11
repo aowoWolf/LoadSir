@@ -2,6 +2,8 @@ package com.kingja.loadsir.callback
 
 import android.content.Context
 import android.view.View
+import androidx.core.view.isInvisible
+import com.kingja.loadsir.core.OnReloadListener
 
 /**
  * Description:TODO
@@ -9,22 +11,11 @@ import android.view.View
  * Author:KingJA
  * Email:kingjavip@gmail.com
  */
-class SuccessCallback(view: View?, context: Context?, onReloadListener: OnReloadListener?) :
-    Callback(view, context, onReloadListener) {
-    override fun onCreateView(): Int {
-        return 0
-    }
+class SuccessCallback(view: View?, context: Context?, reloadListener: OnReloadListener?) :
+    Callback(view, context, reloadListener) {
+    override fun onCreateView(): Int = 0
 
-    @Deprecated("Use {@link #showWithCallback(boolean successVisible)} instead.")
-    fun hide() {
-        obtainRootView().visibility = View.INVISIBLE
-    }
-
-    fun show() {
-        obtainRootView().visibility = View.VISIBLE
-    }
-
-    fun showWithCallback(successVisible: Boolean) {
-        obtainRootView().visibility = if (successVisible) View.VISIBLE else View.INVISIBLE
+    fun isShow(isVisible: Boolean) {
+        obtainRootView().isInvisible = !isVisible
     }
 }

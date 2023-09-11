@@ -1,33 +1,26 @@
 package com.kingja.loadsir.core
 
 import android.content.Context
+import android.os.Looper
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.kingja.loadsir.LoadSirUtil
 import com.kingja.loadsir.callback.Callback
+import com.kingja.loadsir.core.OnReloadListener
 import com.kingja.loadsir.callback.SuccessCallback
 
 /**
  * @author ljkeo
  * @date 2022/9/5 13:56
  */
-class LoadLayout(context: Context, private val onReloadListener: Callback.OnReloadListener?) :
-    FrameLayout(context) {
-    private val TAG = javaClass.simpleName
-    private val callbacks: MutableMap<Class<out Callback?>?, Callback?> = HashMap()
-//    private var context: Context? = null
+class LoadLayout(
+    context: Context,
+    private val reloadListener: OnReloadListener?
+) : FrameLayout(context) {
+    private val callbackPool: MutableMap<Class<out Callback?>?, Callback?> = HashMap()
 
-    //    private var onReloadListener: Callback.OnReloadListener? = null
     private var preCallback: Class<out Callback?>? = null
     var currentCallback: Class<out Callback?>? = null
         private set
-
-    /*
-        constructor(context: Context, onReloadListener: Callback.OnReloadListener?) : this(context) {
-            this.context = context
-            this.onReloadListener = onReloadListener
-        }
-    */
 
     fun setupSuccessLayout(callback: Callback) {
         addCallback(callback)
@@ -42,21 +35,20 @@ class LoadLayout(context: Context, private val onReloadListener: Callback.OnRelo
         currentCallback = SuccessCallback::class.java
     }
 
-    fun setupCallback(callback: Callback?) {
-        val cloneCallback = callback!!.copy()
-        cloneCallback!!.setCallback(context, onReloadListener)
-        addCallback(cloneCallback)
-    }
-
-    fun addCallback(callback: Callback?) {
-        if (!callbacks.containsKey(callback!!.javaClass)) {
-            callbacks[callback.javaClass] = callback
+    fun setupCallback(callback: Callback) {
+        callback.copy().let {
+            it.setCallback(context, reloadListener)
+            addCallback(it)
         }
     }
 
-    fun showCallback(callback: Class<out Callback?>?) {
+    fun addCallback(callback: Callback) {
+        callbackPool.getOrPut(callback.javaClass) { callback }
+    }
+
+    fun showCallback(callback: Class<out Callback?>) {
         checkCallbackExist(callback)
-        if (LoadSirUtil.isMainThread) {
+        if (isMainThread) {
             showCallbackView(callback)
         } else {
             postToMainThread(callback)
@@ -64,7 +56,7 @@ class LoadLayout(context: Context, private val onReloadListener: Callback.OnRelo
     }
 
     private fun postToMainThread(status: Class<out Callback?>?) {
-        post(Runnable { showCallbackView(status) })
+        post { showCallbackView(status) }
     }
 
     private fun showCallbackView(status: Class<out Callback?>?) {
@@ -72,19 +64,19 @@ class LoadLayout(context: Context, private val onReloadListener: Callback.OnRelo
             if (preCallback == status) {
                 return
             }
-            callbacks[preCallback]!!.onDetach()
+            callbackPool[preCallback]!!.onDetach()
         }
         if (childCount > 1) {
             removeViewAt(CALLBACK_CUSTOM_INDEX)
         }
-        for (key in callbacks.keys) {
+        for (key in callbackPool.keys) {
             if (key == status) {
-                val successCallback = callbacks[SuccessCallback::class.java] as SuccessCallback?
+                val successCallback = callbackPool[SuccessCallback::class.java] as SuccessCallback
                 if (key == SuccessCallback::class.java) {
-                    successCallback!!.show()
+                    successCallback.isShow(true)
                 } else {
-                    val instance = callbacks[key]
-                    successCallback!!.showWithCallback(instance!!.successVisible)
+                    val instance = callbackPool[key]
+                    successCallback.isShow(instance!!.getSuccessVisible())
                     val rootView = instance.getRootView()
                     addView(rootView)
                     instance.onAttach(context, instance.actualRootView)
@@ -95,18 +87,13 @@ class LoadLayout(context: Context, private val onReloadListener: Callback.OnRelo
         currentCallback = status
     }
 
-    fun setCallBack(callback: Class<out Callback?>, transport: Transport) {
+    fun setCallBack(callback: Class<out Callback?>, transport: TransportKt?) {
         checkCallbackExist(callback)
-        transport.order(context, callbacks[callback]!!.obtainRootView())
-    }
-
-    fun setCallBack(callback: Class<out Callback?>, transport: TransportKt) {
-        checkCallbackExist(callback)
-        transport(context, callbacks[callback]!!.obtainRootView())
+        transport?.invoke(callbackPool[callback]!!.obtainRootView())
     }
 
     private fun checkCallbackExist(callback: Class<out Callback?>?) {
-        require(callbacks.containsKey(callback)) {
+        require(callbackPool.containsKey(callback)) {
             String.format(
                 "The Callback (%s) is nonexistent.", callback?.simpleName
             )
@@ -117,3 +104,6 @@ class LoadLayout(context: Context, private val onReloadListener: Callback.OnRelo
         private const val CALLBACK_CUSTOM_INDEX = 1
     }
 }
+
+internal val isMainThread: Boolean
+    get() = Looper.myLooper() == Looper.getMainLooper()

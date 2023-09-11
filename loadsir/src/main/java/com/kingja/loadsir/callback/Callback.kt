@@ -3,7 +3,10 @@ package com.kingja.loadsir.callback
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
+import androidx.core.view.get
 import androidx.core.widget.NestedScrollView
+import com.kingja.loadsir.core.OnReloadListener
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
@@ -19,24 +22,25 @@ import java.io.Serializable
 abstract class Callback(
     private var rootView: View?,
     private var context: Context?,
-    private var onReloadListener: OnReloadListener?
+    protected var reloadListener: OnReloadListener?
 ) : Serializable {
+    constructor() : this(null, null, null)
+
     /**
      * if return true, the successView will be visible when the view of callback is attached.
      */
-    var successVisible = false
-        protected set
+    open fun getSuccessVisible():Boolean = false
 
-    fun setCallback(context: Context?, onReloadListener: OnReloadListener?): Callback {
+    open fun setCallback(context: Context, reloadListener: OnReloadListener?) = apply {
         this.context = context
-        this.onReloadListener = onReloadListener
-        return this
+        this.reloadListener = reloadListener
     }
 
-    fun getRootView(): View? {
+    @CallSuper
+    open fun getRootView(): View {
         val resId = onCreateView()
         if (resId == 0 && rootView != null) {
-            return rootView
+            return rootView!!
         }
         if (onBuildView(context) != null) {
             rootView = wrapView(onBuildView(context))
@@ -44,72 +48,55 @@ abstract class Callback(
         if (rootView == null) {
             rootView = wrapView(View.inflate(context, onCreateView(), null))
         }
-        actualRootView.setOnClickListener(View.OnClickListener { v ->
-            if (onReloadEvent(context, rootView)) {
-                return@OnClickListener
+        actualRootView.setOnClickListener {  v->
+            if (onReloadEvent(rootView!!)) {
+                return@setOnClickListener
             }
 
-            onReloadListener?.onReload(v)
-        })
+            reloadListener?.invoke(v)
+        }
         //no successCallback
         //onViewCreate(context, rootView);
         onViewCreate(context, actualRootView)
-        return rootView
+        return rootView!!
     }
 
-    protected fun wrapView(oldView: View?): View {
-        val wrapperView = NestedScrollView(context!!)
-        wrapperView.isFillViewport = true
-        wrapperView.addView(oldView!!)
-        return wrapperView
-    }
+    private fun wrapView(oldView: View?): View =
+        NestedScrollView(context!!).apply {
+            isFillViewport = true
+            addView(oldView!!)
+        }
 
-    protected fun onBuildView(context: Context?): View? = null
+    protected open fun onBuildView(context: Context?): View? = null
 
-    protected fun onReloadEvent(context: Context?, view: View?): Boolean = false
+    protected open fun onReloadEvent(view: View): Boolean = false
 
-    fun copy(): Callback? {
+    fun copy(): Callback {
         val bao = ByteArrayOutputStream()
-        var obj: Any?
+        var obj: Any
         ObjectOutputStream(bao).use { it.writeObject(this) }
         ObjectInputStream(ByteArrayInputStream(bao.toByteArray())).use { obj = it.readObject() }
-        return obj as Callback?
-/*
-
-        val oos: ObjectOutputStream
-        try {
-            oos = ObjectOutputStream(bao)
-            oos.writeObject(this)
-            oos.close()
-            val bis = ByteArrayInputStream(bao.toByteArray())
-            val ois = ObjectInputStream(bis)
-            obj = ois.readObject()
-            ois.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return obj as Callback?
-*/
+        return obj as Callback
     }
 
     /**
      * @since 1.2.2
      */
-    fun obtainRootView(): View {
-        if (rootView == null) {
-            //no successCallback
-            rootView = wrapView(View.inflate(context, onCreateView(), null))
-            return actualRootView
+    fun obtainRootView(): View =
+        rootView ?: wrapView(View.inflate(context, onCreateView(), null)).let {
+            rootView = it
+            actualRootView
         }
-        return rootView!!
-    }
 
     val actualRootView: View
-        get() = (rootView as ViewGroup?)!!.getChildAt(0)
+        get() = (rootView as ViewGroup)[0]
 
+/*
+    @Deprecated("no used")
     interface OnReloadListener : Serializable {
         fun onReload(v: View?)
     }
+*/
 
     protected abstract fun onCreateView(): Int
 
@@ -118,19 +105,19 @@ abstract class Callback(
      *
      * @since 1.2.2
      */
-    protected fun onViewCreate(context: Context?, view: View?) {}
+    protected open fun onViewCreate(context: Context?, view: View?) {}
 
     /**
      * Called when the rootView of Callback is attached to its LoadLayout.
      *
      * @since 1.2.2
      */
-    fun onAttach(context: Context?, view: View?) {}
+    open fun onAttach(context: Context?, view: View?) {}
 
     /**
      * Called when the rootView of Callback is removed from its LoadLayout.
      *
      * @since 1.2.2
      */
-    fun onDetach() {}
+    open fun onDetach() {}
 }

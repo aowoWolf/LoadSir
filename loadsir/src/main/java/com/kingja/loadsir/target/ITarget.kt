@@ -1,7 +1,7 @@
 package com.kingja.loadsir.target
 
-import com.kingja.loadsir.callback.Callback
 import com.kingja.loadsir.core.LoadLayout
+import com.kingja.loadsir.core.OnReloadListener
 
 /**
  * Description:TODO
@@ -21,9 +21,9 @@ interface ITarget {
     /**
      * 1.removeView 2.确定LP 3.addView
      * @param target
-     * @param onReloadListener
+     * @param reloadListener
      * @return
      * v1.3.8
      */
-    fun replaceView(target: Any, onReloadListener: Callback.OnReloadListener?): LoadLayout
+    fun replaceView(target: Any, reloadListener: OnReloadListener?): LoadLayout
 }
