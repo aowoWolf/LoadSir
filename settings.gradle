@@ -1,2 +1,2 @@
 include ':loadsir'
-include ':app'
+//include ':app'
