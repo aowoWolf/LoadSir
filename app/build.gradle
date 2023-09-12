@@ -44,6 +44,7 @@ dependencies {
 //    implementation('com.airbnb.android:lottie:3.3.0') { exclude group: 'com.android.support' }
     implementation 'com.airbnb.android:lottie:3.7.0'
 //    implementation project(':loadsir')
-    implementation 'com.kingja.loadsir:loadsir:1.3.8'
+//    implementation 'com.kingja.loadsir:loadsir:1.3.8'
+    implementation "com.cz89.gitlab.android_libs:loadsir:1.3.9"
 //    implementation 'com.github.aowoWolf:LoadSir:1.3.9'
 }

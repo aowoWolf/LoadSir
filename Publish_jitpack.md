@@ -10,3 +10,12 @@
 2. 在[jitpack](https://jitpack.io/w/user)网站注册,在[个人信息](https://jitpack.io/w/user)里的GitLab.com的personal Access Token 填写步骤1获取的accessToken
 3. 在jitpack.io网站直接搜索com.cz89.gitlab.android_libs/loadsir,也可以直接打开该网址https://jitpack.io/#com.cz89.gitlab.android_libs/loadsir，点击Look up
 4. 在下面的Releases、Builds、Branches、Commits直接点击Get it按钮就可直接发布aar到jitpack（建议：对指定提交记录打远程tag，然后在Releases选中该tag发布aar）
+5. 因为gitlab的loadsir库是私有仓库，所以生成的aar需要通过gitlab生成的accessToken才能获取
+```groovy
+    maven {
+        url 'https://jitpack.io'
+        // userName:填写gitLab中声明的accessToken
+        // password:不用填写
+        credentials { username gitlabAccessToken }
+    }
+```

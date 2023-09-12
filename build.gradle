@@ -8,7 +8,10 @@ buildscript {
         maven {url 'https://maven.aliyun.com/repository/google' }
         maven {url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://repo1.maven.org/maven2/' }
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+            credentials { username "glpat-32n8JXjT9g7tBVfNzBCK" }
+        }
         mavenCentral()
         google()
         jcenter()
@@ -27,7 +30,10 @@ allprojects {
         maven {url 'https://maven.aliyun.com/repository/google' }
         maven {url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://repo1.maven.org/maven2/' }
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+            credentials { username "glpat-32n8JXjT9g7tBVfNzBCK" }
+        }
         mavenCentral()
         google()
         jcenter()
