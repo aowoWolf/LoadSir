@@ -32,7 +32,6 @@ afterEvaluate {
 
 android {
     compileSdk COMPILE_SDK_VERSION as int
-//    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdk MIN_SDK_VERSION as int
@@ -42,12 +41,6 @@ android {
 
 //        archivesBaseName = "LoadSir-V${versionName}_code_${versionCode}-${new Date().format('yyyy.MM.dd_HH.mm')}"
     }
-/*
-    buildTypes {
-        release {
-        }
-    }
-*/
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -55,8 +48,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
-
-
 }
 
 dependencies {
