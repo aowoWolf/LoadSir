@@ -7,6 +7,10 @@
 - https://github.com/KingJA/LoadSir/issues/149
 - https://github.com/KingJA/LoadSir/issues/120
 
+[发布aar参考](Publish_jitpack.md)
+
+---
+
 
 LoadSir
 ---
